@@ -1,8 +1,7 @@
-# This Python 3 environment comes with many helpful analytics libraries installed
-# It is defined by the kaggle/python docker image: https://github.com/kaggle/docker-python
-# For example, here's several helpful packages to load in 
-
-# pip install matplotlib statsmodels numpy pandas sklearn ploty keras
+"""
+Dependencies:
+pip install matplotlib statsmodels numpy pandas sklearn ploty keras
+"""
 import matplotlib.pyplot as plt
 import statsmodels.tsa.seasonal as smt
 import numpy as np # linear algebra
@@ -10,8 +9,12 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import random
 import datetime as dt
 from sklearn import linear_model 
-from sklearn.metrics import mean_absolute_error
 import plotly
+import os
+from joblib import dump, load # model persistence
+
+# metrics
+from sklearn.metrics import mean_absolute_error
 
 # import the relevant Keras modules
 from keras.models import Sequential
@@ -22,9 +25,8 @@ from keras.layers import Dropout
 # Input data files are available in the "../input/" directory.
 # For example, running this (by clicking run or pressing Shift+Enter) will list the files in the input directory
 
-from subprocess import check_output
-#print(check_output(["ls", "../input"]).decode("utf8"))
-import os
+# from subprocess import check_output
+# print(check_output(["ls", "../input"]).decode("utf8"))
 os.chdir('input/')
 
 #read data
@@ -85,7 +87,7 @@ split_date = list(data[0]["Date"][-(2*window_len+1):])[0]
 
 #Split the training and test set
 training_set, test_set = df[df['Date'] < split_date], df[df['Date'] >= split_date]
-training_set = training_set.drop(['Date','Label', 'OpenInt'], 1)
+training_set = training_set.drop(['Date','Label','OpenInt'], 1)
 test_set = test_set.drop(['Date','Label','OpenInt'], 1)
 
 #Create windows for training
@@ -129,24 +131,32 @@ def build_model(inputs, output_size, neurons, activ_func="linear",
 
     model.compile(loss=loss, optimizer=optimizer)
     return model
-
 # ----- TRAINING OF THE LSTM MODEL -----
-# initialise model architecture
-nn_model = build_model(LSTM_training_inputs, output_size=1, neurons = 32)
-# model output is next price normalised to 10th previous closing price
-# train model on data
-# note: eth_history contains information on the training error per epoch
-nn_history = nn_model.fit(LSTM_training_inputs, LSTM_training_outputs, 
-                            epochs=5, batch_size=1, verbose=2, shuffle=True)
+if (not os.path.exists('LSTM.joblib')):
+    # initialise model architecture
+    nn_model = build_model(LSTM_training_inputs, output_size=1, neurons = 32)
+    # model output is next price normalised to 10th previous closing price
+    # train model on data
+    # note: eth_history contains information on the training error per epoch
+    nn_history = nn_model.fit(LSTM_training_inputs, LSTM_training_outputs, 
+                                epochs=5, batch_size=1, verbose=2, shuffle=True)
+    
+    dump(nn_model, 'LSTM.joblib')
+    print('Dumped model')
 
+else:
+    print('Loaded model')
+    nn_model = load('LSTM.joblib')
 
 # ----- Plot of prediction one data point ahead -----
+nn_predict = nn_model.predict(LSTM_test_inputs)
 plt.plot(LSTM_test_outputs, label = "actual")
-plt.plot(nn_model.predict(LSTM_test_inputs), label = "predicted")
+plt.plot(nn_predict, label = "predicted")
 plt.legend()
 plt.show()
-MAE = mean_absolute_error(LSTM_test_outputs, nn_model.predict(LSTM_test_inputs))
-print('The Mean Absolute Error is: {}'.format(MAE))
+MAE = mean_absolute_error(LSTM_test_outputs, nn_predict)
+score = score(LSTM_test_outputs, nn_predict)
+print('Mean Absolute Error: {}'.format(MAE))
 
 # ----- Plot of prediction 10 time steps ahead -----
 """
