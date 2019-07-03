@@ -20,12 +20,10 @@ from keras.optimizers import Adam
 from keras.utils import to_categorical
 
 # Parameters for S&P 500
-data_file = '../input/processed/S&P.csv'
-output_col = 'Movement'
+#data_file, output_col = '../input/processed/S&P.csv', 'Movement'
 
 # Parameters for banknote authentication data set
-#data_file = '../input/banknote_authentication.csv'
-#output_col = 'Class'
+data_file, output_col = '../input/banknote_authentication.csv', 'Class'
 
 df = pd.read_csv(data_file, sep=',')
 
