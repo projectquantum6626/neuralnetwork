@@ -103,6 +103,12 @@ LSTM_training_outputs = (training_set['Close'][window_len:].values/training_set[
 
 LSTM_training_inputs = [np.array(LSTM_training_input) for LSTM_training_input in LSTM_training_inputs]
 LSTM_training_inputs = np.array(LSTM_training_inputs)
+print("SHAPES")
+print(LSTM_training_inputs.shape[0])
+print(LSTM_training_inputs.shape[1])
+print(LSTM_training_inputs.shape[2])
+print(LSTM_training_inputs)
+
 
 #Create windows for testing
 LSTM_test_inputs = []
