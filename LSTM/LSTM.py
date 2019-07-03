@@ -22,13 +22,6 @@ from keras.layers import Activation, Dense
 from keras.layers import LSTM
 from keras.layers import Dropout
 
-# Input data files are available in the "../input/" directory.
-# For example, running this (by clicking run or pressing Shift+Enter) will list the files in the input directory
-
-# from subprocess import check_output
-# print(check_output(["ls", "../input"]).decode("utf8"))
-os.chdir('input/')
-
 #read data
 # kernels let us navigate through the zipfile as if it were a directory
 
@@ -41,7 +34,7 @@ print(filenames)
 
 data = []
 for filename in filenames:
-    df = pd.read_csv(filename, sep=',')
+    df = pd.read_csv('../input/' + filename, sep=',')
 
     label, _, _ = filename.split(sep='.')
     df['Label'] = filename
@@ -161,7 +154,6 @@ plt.plot(nn_predict, label = "predicted")
 plt.legend()
 plt.show()
 MAE = mean_absolute_error(LSTM_test_outputs, nn_predict)
-score = score(LSTM_test_outputs, nn_predict)
 print('Mean Absolute Error: {}'.format(MAE))
 
 # ----- Plot of prediction 10 time steps ahead -----
