@@ -22,11 +22,11 @@ def fillInEmpty():
                         if (pd.isna(row) or row == 'ND' or row == 'NA' or
                         row == '' or row == ' ' or row == '.'):
                                 everything_df[column].iloc[i] = everything_df[column].iloc[i-1]
-        everything_df.to_csv('input/processed/Everything2.csv', index=False)
+        everything_df.to_csv('input/processed/Everything.csv', index=False)
 
 
 # format an individual file (add missing dates, remove extra dates)
-def individualFile(filename):
+def individualFile(filename, columns = ['Open', 'High', 'Low', 'Close', 'Volume']):
         df = pd.read_csv('input/'+filename, sep=',')
         everything_df = pd.read_csv('input/processed/Everything.csv', sep=',')
 
@@ -39,7 +39,6 @@ def individualFile(filename):
         # Everything's date column contains the dates that I'm interested in
         allDays = df['Everything_Date'].values
 
-        columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         #removes dates available in original days that are not desired in all days
         for i in range(len(originalDays)):
                 while (df['Date'].iloc[i] not in allDays) and not (pd.isna(df['Date'].iloc[i])):
@@ -51,6 +50,7 @@ def individualFile(filename):
         for i in range(len(allDays)):
                 while (df['Everything_Date'].iloc[i] not in df['Date'].values):
                         insert(df, 'Date', i, df['Everything_Date'].iloc[i])
+                        print(df['Everything_Date'].iloc[i])
                         for col in columns:
                                 insert(df, col, i, df[col].iloc[i-1])
         #inserts prices that aren't originally there (constant replacement)
@@ -60,4 +60,5 @@ def individualFile(filename):
         df = df.drop(columns=['Everything_Date'])
         df.to_csv('input/processed/P_'+filename, index=False)
 
+#individualFile('ISM_INDEX_MONTHLY.csv', columns=['PMI'])
 fillInEmpty()
