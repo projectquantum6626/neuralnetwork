@@ -15,11 +15,10 @@ def preprocess(path, files):
                         # date to unix time (ms since 1970)
                         #try:
                         df['Date'] = pd.to_datetime(df['Date'])
-                        for year in [2000, 2004, 2008, 2012, 2016]:
-                                print(str(year+4))
-                                df_temp = df.loc[((str(year+4)+'-1-1') > df['Date'] ) & (df['Date'] > (str(year)+'-1-1'))]
+                        for year in [2000, 2006, 2012]:
+                                df_temp = df.loc[((str(year+6)+'-1-1') > df['Date'] ) & (df['Date'] > (str(year)+'-1-1'))]
                                 df_temp['Date'] = [datetime.strptime(str(x), "%Y-%m-%d %H:%M:%S").timestamp() for x in df_temp['Date']]
-                                df_temp.to_csv(path + '4year/P_' + str(year) + '_' + str(year+4) + '_' + file, index=False)
+                                df_temp.to_csv(path + '6year/P_' + str(year) + '_' + str(year+6) + '_' + file, index=False)
                         '''except:
                                 print('error')
                                 pass'''

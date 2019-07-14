@@ -30,7 +30,7 @@ def classifyMLP(data_file, output_col, hidden_layer):
 
     # Define MLP model and train
     classifier=MLPClassifier(hidden_layer_sizes=hidden_layer, max_iter=20000, alpha=0.00001,
-                                solver='lbfgs', verbose=10,  random_state=21, tol=0.0000001)
+                                solver='adam', verbose=10,  random_state=21, tol=0.0000001)
     classifier.fit(X_train,Y_train)
 
     """dump(classifier, output_col + '_MLP.joblib')
@@ -45,7 +45,7 @@ def classifyMLP(data_file, output_col, hidden_layer):
 
     log = open('log.txt', 'a+')
     log.write("\nAccuracies: {}".format(accuracies))
-    log.write("\nMean Accuracy: {}".format(accuracies.mean()))
+    log.write("\nMean Accuracy: {}\n".format(accuracies.mean()))
 
-for file in os.listdir('../input/processed/everything/2year'):
-    classifyMLP('../input/processed/everything/2year/'+file, 'S&P_Movement', (3,6))
+for file in os.listdir('../input/processed/everything/6year'):
+    classifyMLP('../input/processed/everything/6year/'+file, 'S&P_Movement', (3,6))
