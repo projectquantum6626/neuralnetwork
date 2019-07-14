@@ -12,20 +12,18 @@ def preprocess(path, files):
                         #if 'Movement' not in df:
                         #        df['Movement'] = np.where(df["Close"]>df["Open"], '1', '0')
 
-                        # drop OpenInt column
-                        if 'OpenInt' in df:
-                                df = df.drop(columns=['OpenInt'])
-
                         # date to unix time (ms since 1970)
-                        try:
-                                df['Date'] = pd.to_datetime(df['Date'])
-                                #df = df.loc[(df['Date']>'2019-5-9')]
-                                df['Date'] = [datetime.strptime(str(x), "%Y-%m-%d %H:%M:%S").timestamp() for x in df['Date']]
-                        except:
-                                pass
-
-                        df.to_csv(path + 'P_' + file, index=False)
+                        #try:
+                        df['Date'] = pd.to_datetime(df['Date'])
+                        for year in [2000, 2004, 2008, 2012, 2016]:
+                                print(str(year+4))
+                                df_temp = df.loc[((str(year+4)+'-1-1') > df['Date'] ) & (df['Date'] > (str(year)+'-1-1'))]
+                                df_temp['Date'] = [datetime.strptime(str(x), "%Y-%m-%d %H:%M:%S").timestamp() for x in df_temp['Date']]
+                                df_temp.to_csv(path + '4year/P_' + str(year) + '_' + str(year+4) + '_' + file, index=False)
+                        '''except:
+                                print('error')
+                                pass'''
         
 
 if __name__ == "__main__":
-        preprocess('input/processed/', ['Everything.csv'])
+        preprocess('input/processed/everything/', ['Everything.csv'])
