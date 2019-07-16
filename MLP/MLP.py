@@ -44,8 +44,8 @@ def classifyMLP(data_file, output_col, hidden_layer, solve, period=None):
     accuracies=cross_val_score(estimator=classifier,X=X_test,y=Y_test,cv=10)
 
     
-    log = open('log1yearWith.csv', 'a+')
-    log.write(data_file.replace('_Everything.csv', '').replace('P_', '').replace('../input/processed/everything/','') + '\n')
+    log = open('log.csv', 'a+')
+    log.write(data_file.replace('../input/processed/everything/','') + '\n')
     #log.write("Accuracies: {}".format(accuracies))
     log.write(solve+',{}\n'.format(accuracies.mean()))
 
@@ -61,11 +61,16 @@ for period in [1,2,3,4,5,6,7,8,9]:
             if file.endswith('old.csv'):
                 classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
 '''
+folder = '../input/processed/everything/'
+for solver in ['sgd','adam','lbfgs']:
+    classifyMLP(folder+'P_Everything.csv', 'S&P_Movement', (3,6), solver)
 
 # Just 1 year periods
+'''
 for period in [1]:
     for solver in ['sgd', 'adam', 'lbfgs']:
         folder = '../input/processed/everything/'+str(period)+'year'
         for file in os.listdir(folder):
             if file.endswith('old.csv'):
                 classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
+'''

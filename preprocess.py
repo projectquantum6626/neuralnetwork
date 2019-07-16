@@ -44,5 +44,5 @@ def preprocess(path, files):
 
 
 if __name__ == "__main__":
-        preprocess('input/processed/everything/', ['Everything_old.csv'])
+        preprocess('input/processed/everything/', ['Everything.csv'])
         #dateProcessing('input/processed/everything/Everything_old.csv')
