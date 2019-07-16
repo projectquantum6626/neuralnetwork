@@ -1,0 +1,36 @@
+../input/processed/everything/2year/2000_2002
+Accuracies: [0.625      0.625      0.75       0.8125     0.75       0.75
+ 0.6875     0.6        0.73333333 0.8       ]
+Mean Accuracy: 0.7133333333333333
+../input/processed/everything/2year/2002_2004
+Accuracies: [0.6875     0.3125     0.6875     0.9375     0.625      0.875
+ 0.625      0.5        0.8        0.71428571]
+Mean Accuracy: 0.6764285714285714
+../input/processed/everything/2year/2004_2006
+Accuracies: [0.76470588 0.8125     0.6875     0.875      0.8125     0.8125
+ 0.53333333 0.8        0.86666667 0.86666667]
+Mean Accuracy: 0.7831372549019608
+../input/processed/everything/2year/2006_2008
+Accuracies: [0.35294118 0.70588235 0.47058824 0.75       0.33333333 0.86666667
+ 0.6        0.66666667 0.46666667 0.86666667]
+Mean Accuracy: 0.6079411764705883
+../input/processed/everything/2year/2008_2010
+Accuracies: [0.41176471 0.82352941 0.52941176 0.4375     0.6        0.33333333
+ 0.6        0.8        0.66666667 0.73333333]
+Mean Accuracy: 0.5935539215686274
+../input/processed/everything/2year/2010_2012
+Accuracies: [0.76470588 0.5        0.875      0.875      0.8125     0.73333333
+ 0.66666667 0.73333333 0.86666667 0.8       ]
+Mean Accuracy: 0.7627205882352942
+../input/processed/everything/2year/2012_2014
+Accuracies: [0.75       0.625      0.3125     0.6875     0.4375     0.625
+ 0.75       0.625      0.66666667 0.57142857]
+Mean Accuracy: 0.6050595238095238
+../input/processed/everything/2year/2014_2016
+Accuracies: [0.4375     0.8125     0.625      0.875      0.625      0.5625
+ 0.875      0.625      0.73333333 0.64285714]
+Mean Accuracy: 0.6813690476190477
+../input/processed/everything/2year/2016_2018
+Accuracies: [0.25       0.8125     0.5        0.6875     0.375      0.5
+ 0.4        0.53333333 0.46666667 0.4       ]
+Mean Accuracy: 0.49250000000000005

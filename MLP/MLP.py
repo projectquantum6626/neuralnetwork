@@ -12,7 +12,7 @@ from joblib import dump, load # model persistence
 #if (not os.path.exists(output_col + '_MLP.joblib')):
 # Parameters for banknote authentication data set
 #data_file, output_col, hidden_layer = '../input/banknote_authentication.csv', 'Class', (8,4)
-def classifyMLP(data_file, output_col, hidden_layer):
+def classifyMLP(data_file, output_col, hidden_layer, solve, period=None):
     df = pd.read_csv(data_file, sep=',')
 
     # Define inputs and outputs
@@ -30,7 +30,7 @@ def classifyMLP(data_file, output_col, hidden_layer):
 
     # Define MLP model and train
     classifier=MLPClassifier(hidden_layer_sizes=hidden_layer, max_iter=20000, alpha=0.00001,
-                                solver='adam', verbose=10,  random_state=21, tol=0.0000001)
+                                solver=solve, verbose=10,  random_state=21, tol=0.0000001)
     classifier.fit(X_train,Y_train)
 
     """dump(classifier, output_col + '_MLP.joblib')
@@ -43,9 +43,20 @@ def classifyMLP(data_file, output_col, hidden_layer):
     # Print results
     accuracies=cross_val_score(estimator=classifier,X=X_test,y=Y_test,cv=10)
 
-    log = open('log.txt', 'a+')
-    log.write("\nAccuracies: {}".format(accuracies))
-    log.write("\nMean Accuracy: {}\n".format(accuracies.mean()))
+    '''
+    log = open('log2.csv', 'a+')
+    log.write(data_file.replace('_Everything.csv', '').replace('P_', '').replace('../input/processed/everything/','') + '\n')
+    #log.write("Accuracies: {}".format(accuracies))
+    log.write(solve+',{}\n'.format(accuracies.mean()))'''
+    
+    print('{}\n'.format(accuracies.mean()))
 
-for file in os.listdir('../input/processed/everything/6year'):
-    classifyMLP('../input/processed/everything/6year/'+file, 'S&P_Movement', (3,6))
+# FULL 19 years
+# classifyMLP('../input/processed/everything/Everything.csv', 'S&P_Movement', (3,6), 'sgd')
+
+# Periods 1-9
+for period in [1,2,3,4,5,6,7,8,9]:
+    for solver in ['sgd', 'adam', 'lbfgs']:
+        folder = '../input/processed/everything/'+str(period)+'year'
+        for file in os.listdir(folder):
+            classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
