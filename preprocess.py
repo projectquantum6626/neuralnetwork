@@ -31,12 +31,12 @@ def preprocess(path, files):
                         df = pd.read_csv(path+file, sep=',')
 
                         # yearly periods I'm interested in separating the data
-                        '''periods = [1,2,3,4,5,6,7,8,9]
+                        periods = [1,2,3,4,5,6,7,8,9]
                         for period in periods:
-                                folder = 'input/processed/everything/' + str(period) + 'year'
+                                folder = 'input/processed/everything/old/' + str(period) + 'year'
                                 if not os.path.exists(folder):
                                         os.mkdir(folder)
-                                        separateByYear(period, path, df, file)'''
+                                        separateByYear(period, path, df, file)
 
                         # Generate up/down
                         #if 'Movement' not in df:
@@ -44,5 +44,5 @@ def preprocess(path, files):
 
 
 if __name__ == "__main__":
-        #preprocess('input/processed/everything/', ['Everything.csv'])
-        dateProcessing('input/processed/everything/Everything_old.csv')
+        preprocess('input/processed/everything/', ['Everything_old.csv'])
+        #dateProcessing('input/processed/everything/Everything_old.csv')

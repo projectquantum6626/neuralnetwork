@@ -53,15 +53,19 @@ def classifyMLP(data_file, output_col, hidden_layer, solve, period=None):
 # classifyMLP('../input/processed/everything/Everything.csv', 'S&P_Movement', (3,6), 'sgd')
 
 # Periods 1-9
-'''for period in [1,2,3,4,5,6,7,8,9]:
+'''
+for period in [1,2,3,4,5,6,7,8,9]:
     for solver in ['sgd', 'adam', 'lbfgs']:
         folder = '../input/processed/everything/'+str(period)+'year'
         for file in os.listdir(folder):
-            classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)'''
+            if file.endswith('old.csv'):
+                classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
+'''
 
 # Just 1 year periods
 for period in [1]:
     for solver in ['sgd', 'adam', 'lbfgs']:
         folder = '../input/processed/everything/'+str(period)+'year'
         for file in os.listdir(folder):
-            classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
+            if file.endswith('old.csv'):
+                classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
