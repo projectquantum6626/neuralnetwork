@@ -9,16 +9,14 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from datetime import datetime
 import os
-from joblib import dump, load # model persistence
 
-#if (not os.path.exists(output_col + '_MLP.joblib')):
-# Parameters for banknote authentication data set
-#data_file, output_col, hidden_layer = '../input/banknote_authentication.csv', 'Class', (8,4)
 def classifySVM(data_file, output_col, period=None, Date=False):
     df = pd.read_csv(data_file, sep=',')
 
+    # Choosing whether to take in Date column or not
     if not Date:
-        df = df.drop(columns=['Date'])
+        if 'Date' in df.columns:
+            df = df.drop(columns=['Date'])
     else:
         df['Date'] = pd.to_datetime(df['Date'])
         df['Date'] = [datetime.strptime(str(x), "%Y-%m-%d %H:%M:%S").timestamp() for x in df['Date']]
@@ -43,38 +41,8 @@ def classifySVM(data_file, output_col, period=None, Date=False):
         predicted = classifier.predict(X_test)
         print('{} {}'.format(kernel, accuracy_score(Y_test, predicted)))
 
-    """dump(classifier, output_col + '_MLP.joblib')
-        print('Dumped model')
+# Test with popular data set
+# classifySVM('../input/banknote_authentication.csv', 'Class')
 
-    else:
-        print('Loaded model')
-        classifier = load(output_col + '_MLP.joblib')"""
-
-    #log = open('log.csv', 'a+')
-    #log.write(data_file.replace('../input/processed/everything/','') + '\n')
-
-# folder = '../input/processed/everything/'
 classifySVM('../input/processed/everything/Everything_delta.csv', 'S&P_Movement')
 
-# FULL 19 years
-# classifyMLP('../input/processed/everything/Everything.csv', 'S&P_Movement', (3,6), 'sgd')
-
-# Periods 1-9
-'''
-for period in [1,2,3,4,5,6,7,8,9]:
-    for solver in ['sgd', 'adam', 'lbfgs']:
-        folder = '../input/processed/everything/'+str(period)+'year'
-        for file in os.listdir(folder):
-            if file.endswith('old.csv'):
-                classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
-'''
-
-# Just 1 year periods
-'''
-for period in [1]:
-    for solver in ['sgd', 'adam', 'lbfgs']:
-        folder = '../input/processed/everything/'+str(period)+'year'
-        for file in os.listdir(folder):
-            if file.endswith('old.csv'):
-                classifyMLP(folder+'/'+file, 'S&P_Movement', (3,6), solver, period)
-'''
