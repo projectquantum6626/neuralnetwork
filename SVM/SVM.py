@@ -30,21 +30,21 @@ def classifySVM(data_file, output_col, period=None, Date=False, processed=False)
     X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.3,random_state=1)
 
     # Scale everything
-    """scaler = StandardScaler()
+    '''scaler = StandardScaler()
     X = scaler.fit_transform(X)
     X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)"""
+    X_test = scaler.transform(X_test)'''
 
     #X_train = np.nan_to_num(X_train)
     # Define MLP model and train
     for kernel in ['rbf', 'poly', 'linear']:
-        classifier = svm.SVC(kernel=kernel, gamma='auto')
+        classifier = svm.SVC(cache_size=1000, kernel=kernel, gamma='auto')
         classifier.fit(X_train,Y_train.ravel())
         predicted = classifier.predict(X_test)
-        print('{} {}'.format(kernel, accuracy_score(Y_test, predicted)))
+        print('{}, accuracy: {}'.format(kernel, accuracy_score(Y_test, predicted)))
 
 # Test with popular data set
 # classifySVM('../input/banknote_authentication.csv', 'Class')
 
-classifySVM('../input/processed/everything/Everything_delta_normalized.csv', 'S&P_Movement')
+classifySVM('../input/processed/Stanford_DJIA.csv', 'DJIA_Movement')
 
