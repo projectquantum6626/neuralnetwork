@@ -46,5 +46,5 @@ def classifySVM(data_file, output_col, period=None, Date=False, processed=False)
 # Test with popular data set
 # classifySVM('../input/banknote_authentication.csv', 'Class')
 
-classifySVM('../input/processed/Stanford_DJIA.csv', 'DJIA_Movement')
+classifySVM('../input/S&P_Daily_Bollinger.csv', 'Movement')
 
