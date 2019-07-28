@@ -5,63 +5,103 @@ import matplotlib.dates as mdates
 from datetime import datetime
 import ta
 
-df = pd.read_csv('input/5 Min/aapl.csv', sep=',')
+df = pd.read_csv('input/aapl/6month_1hour.csv', sep=',')
 close = df['Close']
 
-df['bb_high_indicator'] = ta.bollinger_hband_indicator(close)
-df['bb_low_indicator'] = ta.bollinger_lband_indicator(close)
-df['rsi'] = ta.rsi(close, n=12)
+def addTechnicalAnalysisIndicators(df):
+    ''' #bollinger indicators (1 or 0)
+    df['bb_high_indicator'] = ta.bollinger_hband_indicator(close)
+    df['bb_low_indicator'] = ta.bollinger_lband_indicator(close)'''
 
+    # rsi with time period (for 5 min intervals, n=12 -> 1 hour)
+    df['rsi'] = ta.rsi(close, n=4)
+
+    df['sma14'] = ta.bollinger_mavg(close, n=14)
+    df['sma30'] = ta.bollinger_mavg(close, n=30)
+    return df
+
+# add technical analysis indicators
+df = addTechnicalAnalysisIndicators(df)
+
+# portfolio will hold stock objects. starts empty.
 portfolio = []
-money = 0
+
+# start with $100,000. net_worth = cash + len(portfolio) * current_stock_price
+cash = 100000
+
+buy_orders = 0
+sell_orders = 0
 
 class stock():
     def __init__(self, price_bought):
         self.price_bought = price_bought
 
-def buy(df, index, money, portfolio):
-    price_of_new_stock = df['Close'].iloc[i]
-    portfolio.insert(0,stock(price_of_new_stock))
-    money -= price_of_new_stock
-    return money
+# buy one stock
+def buy(current_stock_price, cash, portfolio):
+    portfolio.insert(0, stock(current_stock_price))
+    cash -= current_stock_price
+    return round(cash, 2)
 
-def sell(money, portfolio):
+# sell all stocks
+def sell(current_stock_price, cash, portfolio):
     while (len(portfolio) > 0):
-        stock_to_sell = portfolio.pop(0)
-        money += stock_to_sell.price_bought
-    return money
+        stock_to_sell = portfolio[0]
+        cost = stock_to_sell.price_bought
+        # if loss is less than 5%, sell
+        if ((current_stock_price - cost)/cost < 0.05):
+            portfolio.pop(0)
+            cash += current_stock_price
+    return round(cash, 2)
 
+# conditional trading (based on technical analysis)
 for i in range(len(df['rsi'])):
+    if i < len(df['rsi']) - 1:
 
-    rsi = df['rsi'].iloc[i]
-    bb_high = df['bb_high_indicator'].iloc[i]
-    bb_low = df['bb_low_indicator'].iloc[i]
+        # define values to be used for conditions
+        rsi = round(df['rsi'].iloc[i], 2)
+        rsi_next = round(df['rsi'].iloc[i+1], 2)
+        sma1 = round(df['sma14'].iloc[i], 2)
+        sma2 = round(df['sma30'].iloc[i], 2)
 
-    if (rsi < 30):
-        money = buy(df, i, money, portfolio)
-        #print("RSI is {}, Bought stock, balance: {}".format(rsi, money))
+        # get the current stock price
+        current_stock_price = close.iloc[i]
 
-    elif (rsi > 70) & (len(portfolio) > 0):
-        money = sell(money, portfolio)
-        #print("RSI is {}, Sold stock, balance: {}".format(rsi, money))
+        # buy conditions
+        if (rsi < 50) & (rsi_next > 50) & (sma1 > sma2):
+            cash = buy(current_stock_price, cash, portfolio)
+            buy_orders += 1
+            print("{} - BUY @ ${}, rsi: {}, money_spent: {}, money_earned: {}".format(df['Date'].iloc[i], current_stock_price, rsi, money_spent, money_earned))
+        
+        # sell conditions
+        elif (rsi > 50) & (rsi_next < 50) & (sma1 < sma2) & (len(portfolio) > 0):
+            money_earned = sell(current_stock_price, money_earned, portfolio)
+            sell_orders += 1
+            print("{} - SELL @ ${}, rsi: {}, money_spent: {}, money_earned: {}".format(df['Date'].iloc[i], current_stock_price, rsi, money_spent, money_earned))
+
+
+# printing out results
 
 print('Technical Analysis\n----------------')
-# money from buying/selling stocks
-print('Money: {}'.format(round(money, 2)))
 
 # portfolio value (monetary value of all stocks held in portfolio)
-portfolio_value = len(portfolio) * df['Close'].iloc[-1]
-print('Portfolio value: {}'.format(round(portfolio_value, 2)))
+portfolio_value = len(portfolio) * close.iloc[-1]
 
+# money represents cash flows used to buy/sell stock
+ROI = ((portfolio_value + money_earned - money_spent) / money_spent) * 100
 # total value = money + portfolio value
-print('Total value: {}'.format(round(money+portfolio_value, 2)))
+print('Return on Investment: {}%'.format(round(ROI,4)))
+print('Buy orders: {}, Sell orders: {}'.format(buy_orders, sell_orders))
 
 
 print('\n\nBuy and Hold\n----------------')
-price_difference = df['Close'].iloc[-1] - df['Close'].iloc[0]
-print('Total value: {}'.format(round(price_difference, 2)))
+start = close.iloc[0]
+end = close.iloc[-1]
+ROI = ((end - start) / start) * 100
+print('Total value: {}%'.format(round(ROI, 4)))
 
 '''
+# graphing things 
+
 df['bb_high'] = ta.bollinger_hband(close)
 df['bb_low'] = ta.bollinger_lband(close)
 
